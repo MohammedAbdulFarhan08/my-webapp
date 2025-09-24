@@ -1,0 +1,12 @@
+{
+  "name": "my-webapp",
+  "version": "1.0.0",
+  "description": "My first web app with Jenkins deployment",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
