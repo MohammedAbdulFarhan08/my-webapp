@@ -29,8 +29,10 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 echo "📤 Pushing Docker image to Docker Hub..."
-                withDockerRegistry([ credentialsId: 'dockerhub-creds', url: '' ]) {
-                    dockerImage.push("latest")
+                script{
+                    withDockerRegistry([ credentialsId: 'dockerhub-creds', url: '' ]) {
+                        dockerImage.push("latest")
+                    }
                 }
             }
         }
