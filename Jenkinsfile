@@ -21,7 +21,16 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("my-node-app:latest")
+                    dockerImage = docker.build("mohammedabdulfarhan/my-node-app:latest")
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                echo "📤 Pushing Docker image to Docker Hub..."
+                withDockerRegistry([ credentialsId: 'dockerhub-creds', url: '' ]) {
+                    dockerImage.push("latest")
                 }
             }
         }
@@ -30,7 +39,7 @@ pipeline {
             steps {
                 sh '''
                   docker rm -f my-node-app || true
-                  docker run -d --name my-node-app -p 3000:3000 my-node-app:latest
+                  docker run -d --name my-node-app -p 3000:3000 mohammedabdulfarhan/my-node-app:latest
                 '''
             }
         }
