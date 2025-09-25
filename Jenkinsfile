@@ -12,7 +12,7 @@ pipeline {
         CONTAINER_NAME = "my-node-app"
         APP_PORT = "3000"
     }
-
+ //
     stages {
         stage('Checkout') {
             steps {
