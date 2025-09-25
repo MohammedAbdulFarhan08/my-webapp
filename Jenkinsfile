@@ -8,7 +8,7 @@ pipeline {
     environment {
         REGISTRY = "51.21.129.79:5000"    
         IMAGE_NAME = "my-node-app"
-        CREDENTIAL_ID = "detail"       
+        CREDENTIAL_ID = "details"       
         CONTAINER_NAME = "my-node-app"
         APP_PORT = "3000"
     }
