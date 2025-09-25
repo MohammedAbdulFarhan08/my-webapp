@@ -25,7 +25,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Tagging with BUILD_NUMBER for unique versioning
+                    
                     env.IMAGE_TAG = "${IMAGE_NAME}:${BUILD_NUMBER}"
                     sh "docker build -t ${IMAGE_TAG} ."
                 }
@@ -34,7 +34,7 @@ pipeline {
 
         stage('Login to Docker Hub') {
             steps {
-                // Securely use credentials
+                
                 withCredentials([usernamePassword(credentialsId: 'farhan-dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
