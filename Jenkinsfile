@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "mohammedabdulfarhan/my-node-app"
+        REGISTRY = "localhost:5000"   
+        IMAGE_NAME = "my-node-app"
     }
 
     stages {
@@ -16,19 +17,13 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
                 script {
                     def GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
-                    env.IMAGE_TAG = "${IMAGE_NAME}:${GIT_COMMIT}"
-                    env.LATEST_TAG = "${IMAGE_NAME}:latest"
+                    env.IMAGE_TAG = "${REGISTRY}/${IMAGE_NAME}:${GIT_COMMIT}"
+                    env.LATEST_TAG = "${REGISTRY}/${IMAGE_NAME}:latest"
 
                     sh """
                       docker build -t ${IMAGE_TAG} -t ${LATEST_TAG} .
@@ -37,43 +32,13 @@ pipeline {
             }
         }
 
-        stage('Login to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'farhan-dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
+        stage('Push Image') {
             steps {
                 sh """
                   docker push ${IMAGE_TAG}
                   docker push ${LATEST_TAG}
                 """
             }
-        }
-
-        stage('Run Container') {
-            steps {
-                sh '''
-                  # Remove old container if exists
-                  docker rm -f my-node-app || true
-                  
-                  # Run container with commit hash image
-                  docker run -d --name my-node-app -p 3000:3000 --restart unless-stopped ${IMAGE_TAG}
-                '''
-            }
-        }
-    }
-
-    post {
-        failure {
-            echo "Pipeline failed! Cleaning up..."
-            sh 'docker rm -f my-node-app || true'
-        }
-        success {
-            echo "Pipeline completed successfully!"
         }
     }
 }
